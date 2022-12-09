@@ -8,13 +8,14 @@ public class PlayerController : MonoBehaviour
     public float movementSpeed = 5.0f;
     public float turnSpeed = 5.0f;
     public float horizontalTurn;
+    
     void Start()
     {
         playerRb = GetComponent<Rigidbody>();
-
     }
 
     public bool isOnGround = true;
+    public bool midAir = false;
 
     void Update()
     {
@@ -23,6 +24,14 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && isOnGround)
         {
            playerRb.AddForce(Vector3.up * 7, ForceMode.Impulse);
+           isOnGround = false;
+           midAir = true;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space) && midAir)
+        {
+            playerRb.AddForce(Vector3.up * 7, ForceMode.Impulse);
+            midAir = false;
         }
 
         if (Input.GetKey(KeyCode.W))
@@ -36,5 +45,14 @@ public class PlayerController : MonoBehaviour
         }
         
         transform.Rotate(Vector3.up * horizontalTurn  * turnSpeed * Time.deltaTime);
+
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+        isOnGround = true;
+        }
     }
 }
